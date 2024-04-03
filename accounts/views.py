@@ -84,10 +84,13 @@ def ActivateAccount(request):
     messages.success(request,'Account successfully verified')
     return redirect('login')
 
-
+# @login_required(login_url='login')
 def SignUpSuccessView(request):
     return render(request,'pages/register-success.html')
 
+
+def UploadDocs(request):
+    return render(request,'pages/upload-documents.html')
 
 @login_required(login_url='login')
 def Logout(request):
