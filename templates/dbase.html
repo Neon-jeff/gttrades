@@ -38,15 +38,17 @@ input[type=number] {
 
 {% endblock content %}
 {%include 'components/dashboard/bottom-nav.html'%}
+{%include 'dashboard/trading-profile.html'%}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="{%static 'js/fetch-data.js'%}"></script>
 <script>
-  
+
     document.addEventListener('alpine:init', () => {
         Alpine.data('general', () => ({
-            profile:false
+            profile:false,
+            trading_profile:false
         }))
     })
 </script>

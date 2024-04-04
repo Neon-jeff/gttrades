@@ -2,43 +2,66 @@
 
 <!-- upload id verificatio here -->
 <section
-x-data="form"
-  class="h-screen bg-black flex flex-col gap-5 justify-center items-center"
+  x-data="form"
+  class="h-full bg-black flex flex-col gap-5 px-5 py-40 justify-center items-center"
 >
   {%include "components/alerts.html"%} {% include "components/nav.html" %}
   {% include "components/loader.html" %} {% include "components/error.html" %}
-  <h1 class="text-2xl font-semibold text-main">Verify Your Identity</h1>
+  <h1 class="text-2xl max-md:w-full max-md:mt-40 w-1/2 font-semibold text-main">
+    Verify Your Identity
+  </h1>
   <form
-  @submit="UploadPhoto"
+    @submit="UploadPhoto"
     action=""
-    class="w-2/5 text-sm max-md:w-11/12 flex flex-col gap-4 p-10 max-md:p-5 mx-auto bg-neutral-950 shadow-sm rounded-md      text-gray-300"
+    class="w-1/2 text-sm max-md:w-full flex flex-col gap-4 p-10 max-md:p-5 mx-auto bg-neutral-950 shadow-sm rounded-md text-gray-300"
   >
     {% csrf_token %}
-    <p>Choose Document Type</p>
+    <p>
+      Submit your valid means of ID for you to verify your authenticity of your
+      identity, verification can take 5 minutes to 1 hour
+    </p>
+    <p class="font-medium text-main">Choose Document Type</p>
     <div
       class="*:p-5 *:rounded-full *:bg-neutral-900 flex flex-wrap text-xs gap-5 *:cursor-pointer button-group"
     >
-      <span class="border-main border-2 text-main" @click="changeDocType($el)">Government ID</span>
-      <span @click="changeDocType($el)">International Passport</span>
+      <span class="border-main border-2 text-main" @click="changeDocType($el)"
+        >Government ID</span
+      >
+      <span @click="changeDocType($el)">Int'l Passport</span>
       <span @click="changeDocType($el)">Drivers License</span>
     </div>
 
     <span class="flex flex-col gap-3 mt-5">
       <label
         for="uploader"
-        class="bg-neutral-900 p-5 rounded-md text-xs cursor-pointer flex gap-2 flex-col items-center justify-center"
+        class="bg-neutral-900 p-5 rounded-md text-xs text-center cursor-pointer flex gap-2 flex-col items-center justify-center"
       >
         <ion-icon
           name="cloud-upload-outline"
           class="text-3xl text-main"
         ></ion-icon>
-        Click to upload document
-        <span> 200kb (png,jpg) </span>
+        Click to upload. (png, jpg), maximum 500KB
+        <span class="flex items-center gap-2 rounded-md" x-show="upload">
+          <ion-icon
+            name="image-outline"
+            class="text-2xl text-gray-200"
+          ></ion-icon>
+          <span x-text="fileName"></span>
+        </span>
       </label>
-      <input type="file" name="image" accept="image/*" id="uploader" hidden />
+      <input
+        type="file"
+        name="image"
+        accept="image/*"
+        id="uploader"
+        hidden
+        @change="handleFileChange"
+      />
     </span>
 
-    <button class="p-5 rounded-full mt-5 bg-main text-black">Verify Identity</button>
+    <button class="p-5 rounded-full text-lg mt-5 bg-main text-black">
+      Submit Document
+    </button>
   </form>
 
   <script>
@@ -47,7 +70,13 @@ x-data="form"
       Alpine.data("form", () => ({
         showLoader: false,
         showError: false,
+        upload: false,
         errorMessage: "",
+        fileName: "",
+        handleFileChange(e) {
+          this.fileName = e.target.files[0].name;
+          this.upload = true;
+        },
         changeDocType(el) {
           let buttons = Array.from(
             document.querySelector(".button-group").children
@@ -62,20 +91,28 @@ x-data="form"
             }
           });
         },
-        UploadPhoto(e){
-            e.preventDefault();
-            let file=e.target.image.files[0]
-            if(e.target.image.files.length ==0){
-                this.showError=true
-                this.errorMessage="Please upload a verification document"
-                return
-            }
-            if(file.size >200000){
-                this.showError=true
-                this.errorMessage="File should be less than 200kb"
-                return
-            }
-        }
+        async UploadPhoto(e) {
+          e.preventDefault();
+          let file = e.target.image.files[0];
+          if (e.target.image.files.length == 0) {
+            this.showError = true;
+            this.errorMessage = "Please upload a verification document";
+            return;
+          }
+          if (file.size > 500000) {
+            this.showError = true;
+            this.errorMessage = "File should be less than 500kb";
+            return;
+          }
+          form.set("image", e.target.image.files[0]);
+          this.showLoader = true;
+          await fetch("", {
+            method: "post",
+            body: form,
+          }).then(async (res) => {
+            window.location.assign(`${location.origin}/accounts/dashboard/`)
+          });
+        },
       }));
     });
   </script>

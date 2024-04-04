@@ -1,0 +1,85 @@
+ <div class='bg-sub h-full rounded-md p-5 w-full max-md:w-full  text-sm flex flex-col gap-5'>
+    {% comment %} button holder {% endcomment %}
+
+    {% comment %} type {% endcomment %}
+    <form action="" method="post" @submit="submitForm" class='flex flex-col gap-5 text-sm'>
+    {% csrf_token %}
+        <fieldset class='flex flex-col gap-2'>
+            <label for="">Type :</label>
+            <select name="type" id="" class='p-3 bg-gray-700 rounded-md' required>
+                <option value="crypto" class='bg-gray-700'>Crypto</option>
+                <!-- <option value="forex" class='bg-gray-700'>Forex</option> -->
+            </select>
+        </fieldset>
+
+        <fieldset class='flex flex-col gap-2 relative' >
+            <label for="">Amount :</label>
+    <div class='bg-black rounded-md flex justify-between' >
+       <input type="number" name="amount" id="" class=' p-3 bg-black rounded-md' placeholder='$0.00' inputmode="numeric" required>
+            <span  class='p-3 cursor-pointer bg-gray-700 rounded-md text-xs flex items-center justify-between gap-2 w-1/3 max-md:w-1/2 '>
+                <span class='flex items-center gap-2'>
+                                    <img :src="currentCoin.image" alt="" class='h-[30px] w-[30]'>
+                 <span class='max-md:hidden' x-text="currentCoin.symbol"></span>
+                </span>
+                <ion-icon name="chevron-down-outline" @click="show=!show" class='text-lg'></ion-icon>
+            </span>
+    </div>
+                <div class=' bottom-0 w-full bg-gray-700 flex flex-col  p-5 rounded-md '  x-show="show" x-transition x-transition.duration.500ms>
+                <input type="text" name="" placeholder='Search Coin' x-on:input="updateCoins" x-model="query"  id="" class='bg-black search-input p-3 mb-5 rounded-md placeholder:text-xs'>
+
+            <template x-for="asset in matchingCoins" :key="asset.name" x-show.important="!empty">
+                                <div class='cursor-pointer bg-gray-700 rounded-md hover:bg-black py-3 hover:px-3 transition duration-500  ease-in justify-between font-medium text-sm flex items-center gap-2' @click="setCurrentCoin(asset.symbol)">
+            <div class='flex items-center gap-4' ><img src="" :src="asset.image" alt="" class='h-[30px] w-[30px]'>
+                <span x-text="asset.name"></span>
+                 </div>
+                 $0.00
+            </div>
+            </template>
+            <span x-show="empty">No result found</span>
+
+            </div>
+
+            <div class="text-xs font-semibold  flex justify-between mt-5">
+                <p class="font-semibold ">Available Balance</p>
+                <p  class="">${{request.user.profile.dollar_balance}}</p>
+            </div>
+            <div class="text-xs font-semibold  flex justify-between ">
+                <p class="font-semibold">Current Price</p>
+                <p x-text="'$' + currentCoin.price" class="text-main"></p>
+            </div>
+
+
+ <!-- Stop loss and take profit container -->
+
+            <div class="grid grid-col-2 gap-3 mt-3 " >
+
+            <!-- Stop Loss -->
+            <div class="">
+                <p class="pb-2">Stop Loss</p>
+                <div class="bg-black rounded-md flex justify-between p-1" >
+                    <input type="number" name="stop_loss" :placeholder="currentCoin.price" class="p-3 bg-black rounded-md" required>
+                    <span x-text="currentCoin.symbol" class="bg-gray-700  rounded-md p-3"></span>
+                </div>
+            </div>
+            <!-- Take Profit -->
+                        <div class=" ">
+                <p class="pb-2">Take Profit</p>
+                <div class="bg-black rounded-md flex justify-between p-1" >
+                    <input type="number" name="take_profit" :placeholder="currentCoin.price" class="p-3 bg-black rounded-md" required>
+                    <span x-text="currentCoin.symbol" class="bg-gray-700  rounded-md p-3"></span>
+                </div>
+            </div>
+
+
+            </div>
+        </fieldset>
+        <div class="w-full flex gap-3 *:w-1/3 justify-end">
+        <button  class='bg-green-400 text-black  p-3 rounded-md' >
+            Buy
+        </button>
+        <button  class='bg-red-400 text-black  p-3 rounded-md' >
+            Sell
+        </button>
+        </div>
+    </form>
+</div>

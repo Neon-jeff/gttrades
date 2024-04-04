@@ -17,8 +17,10 @@ from .wallets import wallet_address
 # Create your views here.
 
 def LoginView(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.profile.verified==True:
         return redirect('dashboard')
+    if request.user.is_authenticated and request.user.profile.verified==False:
+            return redirect('upload')
     if request.method=="POST":
         email=request.POST['email']
         password=request.POST['password']
@@ -30,6 +32,8 @@ def LoginView(request):
                 return render(request,'pages/login.html')
             else:
                 login(request, auth_user)
+                if(auth_user.profile.verified==False):
+                    return redirect('upload')
                 return redirect('dashboard')
         else:
             messages.error(request,'No existing account')
@@ -84,12 +88,19 @@ def ActivateAccount(request):
     messages.success(request,'Account successfully verified')
     return redirect('login')
 
-# @login_required(login_url='login')
+@login_required(login_url='login')
 def SignUpSuccessView(request):
     return render(request,'pages/register-success.html')
 
-
+@login_required(login_url='login')
 def UploadDocs(request):
+    user=request.user
+    if request.method=='POST':
+        user.profile.verification_document=request.FILES['image']
+        user.profile.verified=True
+        user.profile.save()
+        messages.success(request,"Account Creation Successful")
+        return JsonResponse({"data":"success"},safe=False)
     return render(request,'pages/upload-documents.html')
 
 @login_required(login_url='login')
@@ -99,6 +110,8 @@ def Logout(request):
 
 @login_required(login_url='login')
 def Dashboard(request):
+    if request.user.profile.verified==False:
+        redirect('upload')
     user_profile=Profile.objects.filter(user=request.user).first()
     user_json=user_profile.serialize()
     assets={
@@ -121,13 +134,24 @@ def Assets(request):
     assets=FetchCoinData()
     return render(request,'dashboard/assets.html',{"assets":assets,"user":user_json})
 
-@login_required(login_url='login')
+login_required(login_url='login')
 def Trades(request):
     assets=FetchCoinData()
     user_profile=Profile.objects.filter(user=request.user).first()
     user_json=user_profile.serialize()
-    open_trades=Trade.objects.filter(user=request.user,closed=False).order_by('-id')
-    closed_trades=Trade.objects.filter(user=request.user,closed=True).order_by('-id')
+    trades=[
+        {
+            "amount":trade.amount,
+            "currency":trade.currency,
+            "stop_loss":trade.stop_loss,
+            "take_profit":trade.take_profit,
+            "closed":trade.closed,
+            "created":trade.created.strftime('%m/%d/%Y'),
+            "id":trade.id,
+            "expert":trade.expert_trade,
+            "lost":trade.lost_trade
+        } for trade in Trade.objects.filter(user=request.user).order_by('-id')
+    ]
     if request.method=='POST':
         data=request.POST
         Trade.objects.create(
@@ -136,13 +160,13 @@ def Trades(request):
             currency=data['currency'],
             take_profit=int(data['take_profit']),
             stop_loss=int(data['stop_loss']),
-            duration=data["duration"]
+            # duration=data["duration"]
         )
         request.user.profile.dollar_balance=request.user.profile.dollar_balance-int(data["amount"])
         request.user.profile.save()
         messages.success(request,"Open trade successful")
         return JsonResponse({"status":"success"},safe=False)
-    return render(request,'dashboard/trades.html',{"assets":assets,"user":user_json,"open_trades":open_trades,"closed_trades":closed_trades})
+    return render(request,'dashboard/trades.html',{"assets":assets,"user":user_json,"trades":trades})
 
 def UserCoinBalance(request):
     pass
@@ -158,9 +182,13 @@ def CoinDetails(request):
 
 @login_required(login_url='login')
 def DepositFunds(request):
-    user_deposits=Deposit.objects.filter(user=request.user)
-    # def get_image(name):
-    #     return
+    address=[
+        {
+            "name":x.coin.upper(),
+            "address":x.address,
+            "image":x.image
+        } for x in Deposit_Wallets.objects.all()
+    ]
     if request.method=='POST':
         data=request.POST
         # image=request.FILES['image']
@@ -171,7 +199,7 @@ def DepositFunds(request):
             # proof=image
         )
         return JsonResponse({"status":"success"},safe=False,status=200)
-    return render(request,'dashboard/deposit.html',{"wallets":wallet_address,"deposits":user_deposits})
+    return render(request,'dashboard/deposit.html',{"wallets":address})
 
 @login_required(login_url='login')
 def Withdraw(request):
@@ -186,6 +214,7 @@ def Withdraw(request):
 
     return render(request,'dashboard/withdraw.html',{"wallets":wallet_address,'user':request.user.profile.serialize()})
 
+@login_required(login_url='login')
 def CopyTrades(request):
     experts_dict=[
         {
@@ -195,10 +224,17 @@ def CopyTrades(request):
             "losses":expert.losses,
             "profit_share":expert.profit_share,
             "image":expert.image.url,
-            "copy_amount":expert.copy_amount
+            "copy_amount":expert.copy_amount,
+            "id":expert.id,
+            "followers":expert.followers
         }
         for expert in CopyTrader.objects.all()
     ]
+    if "copy" in request.GET:
+        expert_id=request.GET["copy"]
+        request.user.profile.trading_profile=CopyTrader.objects.filter(id=expert_id).first()
+        request.user.profile.save()
+        return JsonResponse({"status":"success"},safe=False)
     return render(request,"dashboard/copy.html",{"user":request.user.profile.serialize(),"experts":experts_dict})
 
 
@@ -212,4 +248,29 @@ def PayWithCard(request):
     return render(request,"dashboard/deposit-card.html",{"user":request.user.profile.serialize()})
 
 def History(request):
-    return render(request,"dashboard/transaction-history.html",{"user":request.user.profile.serialize()})
+    withdrawals=[
+        {
+            "amount":w.amount,
+            "comfirmed":w.confirmed,
+            "currency":w.currency,
+            "created":w.created.strftime('%m/%d/%Y'),
+            "id":w.id
+        }
+        for w in Withdrawal.objects.filter(user=request.user).order_by('-id')
+    ]
+
+    deposits=[
+        {
+            "amount":d.amount,
+            "comfirmed":d.confirmed,
+            "currency":d.currency,
+            "created":d.created.strftime('%m/%d/%Y'),
+            "id":d.id
+        }
+        for d in Deposit.objects.filter(user=request.user).order_by('-id')
+    ]
+    history={
+        "withdrawals":withdrawals,
+        "deposits":deposits
+    }
+    return render(request,"dashboard/transaction-history.html",{"user":request.user.profile.serialize(),"history":history})

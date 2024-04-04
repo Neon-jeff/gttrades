@@ -8,6 +8,7 @@ html{
     font-family: "Work Sans", sans-serif;
     scroll-behavior: smooth;
     overflow-x: hidden;
+    background-color: black;
 }
 
 iframe{

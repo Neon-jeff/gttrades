@@ -5,6 +5,22 @@ from cloudinary.models import CloudinaryField
 from .qr_code import CreateQRCode
 # Create your models here.
 
+
+
+class CopyTrader(models.Model):
+    name=models.CharField(null=True,blank=True,max_length=200)
+    win_rate=models.CharField(null=True,blank=True,max_length=200)
+    wins=models.CharField(null=True,blank=True,max_length=200)
+    losses=models.CharField(null=True,blank=True,max_length=200)
+    profit_share=models.CharField(null=True,blank=True,max_length=200)
+    copy_amount=models.IntegerField(default=0,null=True,blank=True)
+    image=CloudinaryField('image',null=True,blank=True)
+    followers=models.IntegerField(default=0,null=True,blank=True)
+
+
+    def __str__(self):
+        return f'{self.name} Expert Trader'
+
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
     verified=models.BooleanField(default=False)
@@ -13,7 +29,6 @@ class Profile(models.Model):
     country=models.CharField(blank=True,null=True,max_length=30)
     address=models.CharField(blank=True,null=True,max_length=300)
     phone_code=models.CharField(blank=True,null=True,max_length=30)
-    avatar=models.ImageField(upload_to='profile',null=True,blank=True)
     dollar_balance=models.IntegerField(default=0,null=True,blank=True)
     usdt_balance=models.IntegerField(default=0,null=True,blank=True)
     btc_balance=models.IntegerField(default=0,null=True,blank=True)
@@ -26,24 +41,22 @@ class Profile(models.Model):
     sol_balance=models.IntegerField(default=0,null=True,blank=True)
     ada_balance=models.IntegerField(default=0,null=True,blank=True)
     profit=models.IntegerField(default=0,null=True,blank=True)
-
+    verification_document=CloudinaryField('Verification Document',blank=True,null=True)
+    trading_profile=models.OneToOneField(CopyTrader,null=True,blank=True,related_name='trading_profile',on_delete=models.PROTECT)
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name} Profile '
+        return f'{self.user.first_name} {self.user.last_name} Profile'
     def serialize(self):
         return{
             "dollar_balance":self.dollar_balance,
-            "doge_balance":self.doge_balance,
-            "ada_balance":self.ada_balance,
-            "xlm_balance":self.xlm_balance,
-            "xrp_balance":self.xrp_balance,
-            "bnb_balance":self.bnb_balance,
             "eth_balance":self.eth_balance,
             "btc_balance":self.btc_balance,
-            "sol_balance":self.sol_balance,
             "usdt_balance":self.usdt_balance,
-            "usdc_balance":self.usdc_balance,
-            "profit":self.profit
+            "profit":self.profit,
+            "trading_profile_id":self.trading_profile.id if self.trading_profile!=None else 0,
+            "trading_request":0
         }
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name} Profile '
 
 class Trade(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='user_trades')
@@ -105,14 +118,10 @@ class Deposit_Wallets(models.Model):
 
 # create copy trader section
 
-class CopyTrader(models.Model):
-    name=models.CharField(null=True,blank=True,max_length=200)
-    win_rate=models.CharField(null=True,blank=True,max_length=200)
-    wins=models.CharField(null=True,blank=True,max_length=200)
-    losses=models.CharField(null=True,blank=True,max_length=200)
-    profit_share=models.CharField(null=True,blank=True,max_length=200)
-    copy_amount=models.IntegerField(default=0,null=True,blank=True)
-    image=CloudinaryField('image',null=True,blank=True)
-
+class CopyExpertRequest(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='copy_request')
+    expert=models.ForeignKey(CopyTrader,null=True,blank=True,related_name='expert_request',on_delete=models.PROTECT)
+    confirmed=models.BooleanField(default=False)
+    created=models.DateField(auto_now_add=True)
     def __str__(self):
-        return f'{self.name} Expert Trader'
+        return f'{self.user.first_name} {self.user.last_name} Request'

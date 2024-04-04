@@ -4,160 +4,169 @@
 {% block content %}
 
 <section class="bg-black  text-white max-md:pt-20" x-data="assets">
-{{ wallets|json_script:"wallets"}}
-{% include "components/sidenav.html" %}
-{% include "components/loader.html" %}
-{% include "components/error.html" %}
-{% include "components/alerts.html" %}
+    {{ wallets|json_script:"wallets"}}
+    {% include "components/sidenav.html" %}
+    {% include "components/loader.html" %}
+    {% include "components/error.html" %}
+    {% include "components/alerts.html" %}
 
-{% comment %} main content {% endcomment %}
-<div class="ml-72 max-md:ml-0 p-5 ">
-<div class='max-md:hidden'>
-{% include "components/path.html" %}
-</div>
-
-
-<!-- Currency toggle list -->
-
-<div >
-          <a href="{%url 'select'%}" class="p-4 mb-5 rounded-full flex items-center justify-center gap-1 text-gray-300 bg-gray-900 w-1/6 text-xs max-md:w-2/5 max-md:text-[.65rem] text-center"> <ion-icon name="chevron-back-outline" class="text-base"></ion-icon>Deposit Methods</a>
-    <h1 class='text-2xl font-medium pb-4'>Deposits With Crypto</h1>
-    <!-- main container -->
-    <!-- <p class="text-sm text-gray-400 mb-5 font-medium flex items-center gap-3 max-md:flex-col max-md:items-start"><ion-icon name="alert-circle-outline" class="text-2xl text-green-500"></ion-icon>Fund your trading account by depositing your choice of cryptocurrency </p> -->
-    <div class="bg-sub p-5 max-md:p-5 rounded-md  w-1/2 relative animate-heroparagraph max-md:w-full flex justify-center">
-              {%include 'components/blurblob.html'%}
-
-        <form action="" class="flex flex-col *:z-[1] w-full gap-5 text-sm  max-md:w-full" @submit="submitForm">
-            {% csrf_token %}
-            <fieldset class="flex flex-col gap-2">
-                <label for="">Select Currency:</label>
-                <!-- default select tab -->
-                <div class="w-full" @click="show=!show">
-                <span  class='p-3 cursor-pointer bg-gray-800 rounded-md text-xs flex items-center justify-between gap-2 w-full '>
-                <span class='flex items-center gap-5'>
-                                    <img :src="currentCoin.image" alt="" class='h-[30px] w-[30]'>
-                 <span class='' x-text="currentCoin.name"></span>
-                </span>
-                <ion-icon name="chevron-down-outline"  class='text-lg'></ion-icon>
-            </span>
-                </div>
-
-                                <div class=' bottom-0 w-full bg-gray-700 flex flex-col  p-5 rounded-md '  x-show="show" x-transition x-transition.duration.500ms>
+    {% comment %} main content {% endcomment %}
+    <div class="ml-72 max-md:ml-0 p-5 ">
+        <div class='max-md:hidden'>
+            {% include "components/path.html" %}
+        </div>
 
 
-            <template x-for="asset in coins" :key="asset.name" >
-                                <div class='cursor-pointer bg-gray-700 rounded-md hover:bg-gray-800 py-3 hover:px-3 transition duration-500  ease-in justify-between font-medium text-sm flex items-center gap-2' @click="setCurrentCoin(asset.name)">
-            <div class='flex items-center gap-4' ><img src="" :src="asset.image" alt="" class='h-[30px] w-[30px]'>
-                <span x-text="asset.name"></span>
+        <!-- Currency toggle list -->
 
-            </template>
+        <div>
+            <a href="{%url 'select'%}"
+                class="p-4 mb-5 rounded-full flex items-center justify-center gap-1 text-gray-300 bg-gray-900 w-1/6 text-xs max-md:w-2/5 max-md:text-[.65rem] text-center">
+                <ion-icon name="chevron-back-outline" class="text-base"></ion-icon>Deposit Methods
+            </a>
+            <h1 class='text-2xl font-medium pb-4'>Deposits With Crypto</h1>
+            <!-- main container -->
+            <!-- <p class="text-sm text-gray-400 mb-5 font-medium flex items-center gap-3 max-md:flex-col max-md:items-start"><ion-icon name="alert-circle-outline" class="text-2xl text-green-500"></ion-icon>Fund your trading account by depositing your choice of cryptocurrency </p> -->
+            <div
+                class="bg-sub p-5 max-md:p-5 rounded-md  w-1/2 relative animate-heroparagraph max-md:w-full flex justify-center">
+                {%include 'components/blurblob.html'%}
+
+                <form action="" class="flex flex-col *:z-[1] w-full gap-5 text-sm  max-md:w-full" @submit="submitForm">
+                    {% csrf_token %}
+                    <fieldset class="flex flex-col gap-2">
+                        <label for="">Select Currency:</label>
+                        <!-- default select tab -->
+                        <div class="w-full" @click="show=!show">
+                            <span
+                                class='p-3 cursor-pointer bg-gray-800 rounded-md text-xs flex items-center justify-between gap-2 w-full '>
+                                <span class='flex items-center gap-5'>
+                                    <!-- <img :src="currentCoin.image" alt="" class='h-[30px] w-[30]'> -->
+                                    <span class='' x-text="currentCoin.name"></span>
+                                </span>
+                                <ion-icon name="chevron-down-outline" class='text-lg'></ion-icon>
+                            </span>
+                        </div>
+
+                        <div class=' bottom-0 w-full bg-gray-700 flex flex-col  p-5 rounded-md ' x-show="show"
+                            x-transition x-transition.duration.500ms>
 
 
+                            <template x-for="asset in coins" :key="asset.name">
+                                <div class='cursor-pointer bg-gray-700 rounded-md hover:bg-gray-800 py-3 hover:px-3 transition duration-500  ease-in justify-between font-medium text-sm flex items-center gap-2'
+                                    @click="setCurrentCoin(asset.name)">
+                                    <div class='flex items-center gap-4'>
+                                        <span x-text="asset.name"></span>
+
+                            </template>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="flex flex-col gap-2">
+                        <label for="">Address:</label>
+                        <span class="w-full bg-gray-800 flex justify-between items-center p-3 rounded-md">
+                            <input type="text" :value="currentCoin.address"
+                                class="bg-gray-800 p-2 addr w-full text-sm text-main  rounded-md" disabled>
+                            <ion-icon name="copy-outline"
+                                :class="copied?'cursor-pointer text-xl p-2 rounded-md bg-sub text-green-500':'cursor-pointer text-xl p-2 rounded-md bg-sub'"
+                                @click="copytoClipboard"></ion-icon>
+                        </span>
+                        <img :src="currentCoin.image" class="h-48 self-start rounded-md py-3 w-48 object-contain" alt="">
+                    </fieldset>
+
+                    <fieldset class="flex flex-col gap-2">
+                        <label for="">Amount(USD):</label>
+                        <input type="number" :value="currentCoin.address" name="amount"
+                            class="bg-gray-800 p-5 text-sm  rounded-md" placeholder="Enter amount" required>
+
+                    </fieldset>
+
+                    <div class="flex justify-end gap-5 text-sm">
+                        <a href="{%url 'select'%}"
+                            class=' border-red-500 border-2 text-red-500 p-3 px-5 rounded-full'>Cancel</a>
+                        <button class='bg-main text-black p-3 px-5 rounded-full'>
+                            Submit
+                        </button>
+                    </div>
+                </form>
             </div>
-            </fieldset>
+        </div>
 
-            <fieldset class="flex flex-col gap-2">
-                <label for="">Address:</label>
-                <span class="w-full bg-gray-800 flex justify-between items-center p-3 rounded-md">
-                    <input type="text" :value="currentCoin.address" class="bg-gray-800 p-2 addr w-full text-sm text-main  rounded-md" disabled>
-                    <ion-icon name="copy-outline" :class="copied?'cursor-pointer text-xl p-2 rounded-md bg-sub text-green-500':'cursor-pointer text-xl p-2 rounded-md bg-sub'" @click="copytoClipboard"></ion-icon>
-                </span>
 
-            </fieldset>
 
-                        <fieldset class="flex flex-col gap-2">
-                <label for="">Amount(USD):</label>
-                <input type="number" :value="currentCoin.address" name="amount" class="bg-gray-800 p-5 text-sm  rounded-md" placeholder="Enter amount" required>
-
-            </fieldset>
-
-            <div class="flex justify-between text-sm">
-                <a href="{%url 'select'%}"  class=' border-red-500 border-2 text-red-500 p-3 px-5 rounded-full'>Cancel</a>
-                    <button  class='bg-main text-black p-3 px-5 rounded-full'>
-            Submit
-        </button>
-            </div>
-        </form>
     </div>
-</div>
+    <script src="{% static 'js/fetch-data.js'%}"></script>
 
-
-
-</div>
-<script src="{% static 'js/fetch-data.js'%}"></script>
-
-<script>
-    document.addEventListener('alpine:init', () => {
-        let form=new FormData(document.querySelector('form'))
-        const assets = JSON.parse(document.getElementById("wallets").textContent);
-        Alpine.data('assets', () => ({
-            coins: assets,
-            currentCoin:assets[0],
-            setCurrentCoin(name){
-                this.currentCoin=this.coins.find(item=>item.name==name)
-                this.show=false
-            },
-            show:false,
-            upload:false,
-            fileName:'',
-            copied:false,
-            // this code is redundant till i add the upload element from components/dashboard/upload-***.html
-            handleFileChange(e){
-                this.fileName=e.target.files[0].name
-                this.upload=true
-            },
-            async copytoClipboard(){
-                let input=document.querySelector('.addr')
-                try {
-                    await navigator.clipboard.writeText(input.value);
-                    console.log('Content copied to clipboard');
-                }
-                catch (err) {
-                    console.error('Failed to copy: ', err);
-                }
-                await setTimeout(()=>{
-                    this.copied=false
-                },3000)
-                this.copied=true
-            },
-            // MAKE DEPOSIT WITH THIS FUNCTION
-            async submitForm(e){
-                e.preventDefault()
-                // if(e.target.image.files.length==0){
-                //     this.errorMessage="Upload Payment Proof"
-                //     this.showError=true
-                //     console.log("nothing");
-                //     return
-                // }
-                form.set('amount',e.target.amount.value)
-                // form.set('image',e.target.image.files[0])
-                form.set('currency',this.currentCoin.name)
-                this.showLoader=true
-                await fetch('',{
-                    body:form,
-                    method:'post',
-                }).then(async (res)=>{
-                    let data=await res.json()
-                    if (res.status==200){
-                        this.showLoader=false
-                        this.showError=true
-                        this.errorMessage="Deposit successful, wait for confirmation"
-                        setTimeout(()=>{
-                            location.reload()
-                        },2000)
-                        // await window.location.reload()
-
+    <script>
+        document.addEventListener('alpine:init', () => {
+            let form = new FormData(document.querySelector('form'))
+            const assets = JSON.parse(document.getElementById("wallets").textContent);
+            Alpine.data('assets', () => ({
+                coins: assets,
+                currentCoin: assets[0],
+                setCurrentCoin(name) {
+                    this.currentCoin = this.coins.find(item => item.name == name)
+                    this.show = false
+                },
+                show: false,
+                upload: false,
+                fileName: '',
+                copied: false,
+                // this code is redundant till i add the upload element from components/dashboard/upload-***.html
+                handleFileChange(e) {
+                    this.fileName = e.target.files[0].name
+                    this.upload = true
+                },
+                async copytoClipboard() {
+                    let input = document.querySelector('.addr')
+                    try {
+                        await navigator.clipboard.writeText(input.value);
+                        console.log('Content copied to clipboard');
+                    } catch (err) {
+                        console.error('Failed to copy: ', err);
                     }
-                })
+                    await setTimeout(() => {
+                        this.copied = false
+                    }, 3000)
+                    this.copied = true
+                },
+                // MAKE DEPOSIT WITH THIS FUNCTION
+                async submitForm(e) {
+                    e.preventDefault()
+                    // if(e.target.image.files.length==0){
+                    //     this.errorMessage="Upload Payment Proof"
+                    //     this.showError=true
+                    //     console.log("nothing");
+                    //     return
+                    // }
+                    form.set('amount', e.target.amount.value)
+                    // form.set('image',e.target.image.files[0])
+                    form.set('currency', this.currentCoin.name)
+                    this.showLoader = true
+                    await fetch('', {
+                        body: form,
+                        method: 'post',
+                    }).then(async (res) => {
+                        let data = await res.json()
+                        if (res.status == 200) {
+                            this.showLoader = false
+                            this.showError = true
+                            this.errorMessage =
+                                "Deposit successful, wait for confirmation"
+                            setTimeout(() => {
+                                location.reload()
+                            }, 2000)
+                            // await window.location.reload()
 
-            },
-            showLoader:false,
-            showError:false,
-            errorMessage:"Something went wrong",
-        }))
-    })
-</script>
+                        }
+                    })
+
+                },
+                showLoader: false,
+                showError: false,
+                errorMessage: "Something went wrong",
+            }))
+        })
+    </script>
 </section>
 
 {% endblock content %}
-

@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %}
 
 <section
-  class="h-[100vh] bg-black text-gray-300 text-sm max-md:px-10 flex justify-center items-center"
+  class="h-[100vh] bg-black text-gray-300 text-xs max-md:px-10 flex justify-center items-center"
 >
   {% include "components/nav.html" %}
   <section class="bg-sub animate-slide flex flex-col gap-2 items-center w-1/2 max-md:w-full p-10 rounded-md">
@@ -15,16 +15,16 @@
       style="width: 50px; height: 50px"
    >
     </lord-icon>
-       <div class="text-center">
+       <div class="text-center text-xs ">
         <div class="radial-progress text-main" style="--value:100; --size:4rem; --thickness: 2px;" role="progressbar">100%</div>
 
         <h1 class="text-main text-xl font-semibold py-2">Registration Complete</h1>
-    <p>check your inbox to verify your email </p>
+    <p>check your inbox to see the next steps to verify your identity and access your dashboard </p>
    </div>
 
-   <div class="text-main mt-5 flex gap-2 items-center flex-col">
-    <span>Done Verifying?</span>
-    <a href="{%url 'login'%}" class="bg-main text-black p-3 rounded-full ">Proceed to login</a>
+   <div class="text-main mt-5 text-center flex gap-2 items-center flex-col">
+    <span>If email takes long, click below to verify identity directly</span>
+    <a href="{%url 'upload'%}" class="bg-main text-black p-3 rounded-full ">Verify Identity</a>
    </div>
   </section>
 </section>

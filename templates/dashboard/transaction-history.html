@@ -1,29 +1,107 @@
 {% extends "dbase.html" %} {%load static%} {% block content %}
 
-<section class="bg-black text-white max-md:pt-24" x-data="assets">
-  {{ wallets|json_script:"wallets"}} {% include "components/sidenav.html" %}
-  {%include "components/loader.html" %} {% include "components/error.html" %}
-  {%include "components/alerts.html" %} {% comment %} main content {% endcomment%}
+<section class="bg-black text-white  max-md:pt-24" x-data="assets">
+  {{ wallets|json_script:"wallets"}}
+  {{ history|json_script:"history"}}
+  {% include "components/sidenav.html" %}
+  {%include "components/loader.html" %}
+  {% include "components/error.html" %}
+  {%include "components/alerts.html" %}
+   <!-- main content -->
   <div class="ml-72 max-md:ml-0 p-5 h-screen">
     <div class="max-md:hidden">{% include "components/path.html" %}</div>
 
     <!-- Transaction toggle button list -->
+    <div class="p-5 bg-sub w-1/2 max-md:w-full h-full rounded-md text-xs">
+      <h1 class="text-base">Transaction History</h1>
+      <div class="flex gap-5 text-sm py-5 *:w-1/3 button-group">
+        <button
+          class="bg-gray-800 p-3 rounded-full"
+          @click="changeTradeType($el)"
+        >
+          Deposits
+        </button>
+        <button
+          class="bg-gray-800 text-gray-500 p-3 rounded-full"
+          @click="changeTradeType($el)"
+        >
+          Withdrawals
+        </button>
+      </div>
 
+      <!-- Deposits -->
 
+      <div class="history deposits" x-transition x-transition.duration.500ms>
+        <template x-for="d in deposits" :key="d.id">
+          <div class="flex justify-between bg-gray-800 p-5 rounded-md my-5">
+            <span x-text="d.currency"></span>
+            <span x-text="d.created"></span>
+            <span x-text="'$'+d.amount"></span>
+            <!-- check for confirmation here -->
+            <ion-icon name="alert-circle" x-show="!d.comfirmed" class="text-orange-400 text-xl"></ion-icon>
+            <ion-icon name="checkmark-circle" x-show="d.comfirmed" class="text-green-400 text-xl"></ion-icon>
+          </div>
+        </template>
+      </div>
 
-    <!-- deposit history -->
+      <!-- withdrawals -->
+
+      <div
+        class="history withdrawals"
+        x-show="false"
+        x-transition
+        x-transition.duration.500ms
+      >
+        <template x-for="w in withdrawals" :key="w.id">
+          <div class="flex justify-between bg-gray-800 p-5 rounded-md my-5">
+            <span x-text="w.currency"></span>
+            <span x-text="w.created"></span>
+            <span x-text="'$'+w.amount"></span>
+            <!-- check for confirmation here -->
+            <ion-icon name="alert-circle" x-show="!w.comfirmed" class="text-orange-400 text-xl"></ion-icon>
+            <ion-icon name="checkmark-circle" x-show="w.comfirmed" class="text-green-400 text-xl"></ion-icon>
+          </div>
+        </template>
+      </div>
+    </div>
+
   </div>
   <script src="{% static 'js/fetch-data.js'%}"></script>
 
   <script>
     document.addEventListener("alpine:init", () => {
-      let form = new FormData(document.querySelector("form"));
       const assets = JSON.parse(document.getElementById("wallets").textContent);
+      const history = JSON.parse(document.getElementById("history").textContent);
+      console.log(history);
       Alpine.data("assets", () => ({
-        // MAKE DEPOSIT WITH THIS FUNCTION
+        deposits:history.deposits,
+        withdrawals:history.withdrawals,
         showLoader: false,
         showError: false,
         errorMessage: "Something went wrong",
+        changeTradeType(el) {
+          let buttons = Array.from(
+            document.querySelector(".button-group").children
+          );
+          buttons.forEach((button) => {
+            if (button.textContent == el.textContent) {
+              // debugging happening here hahahahaha
+              button.classList.remove("text-gray-500");
+            } else {
+              button.classList.add("text-gray-500");
+            }
+          });
+          let templates = Array.from(document.querySelectorAll(".history"));
+          templates.forEach((template) => {
+            if (
+              template.classList.contains(el.textContent.toLowerCase().trim())
+            ) {
+              template.setAttribute("x-show", true);
+            } else {
+              template.setAttribute("x-show", false);
+            }
+          });
+        },
       }));
     });
   </script>

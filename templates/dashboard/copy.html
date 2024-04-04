@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<section class="bg-black   text-white max-md:pt-24" x-data="assets">
+<section class="bg-black h-full   text-white max-md:pt-24" x-data="assets">
 {{user|json_script:"user"}}
 {{experts|json_script:"experts"}}
 {% include "components/sidenav.html" %}
@@ -22,7 +22,7 @@
 
 <div class="text-sm">
     <h1 class="text-2xl font-medium pb-2">Copy Experts</h1>
-    <p class="text-gray-200">Increase your win rate by copying trades from experts</p>
+    <p class="text-gray-400">Increase your win rate by copying trades from experts</p>
     <p class="text-gray-200 text-lg font-medium py-5 mt-10">Available Experts</p>
 
     <!-- Experts cards -->
@@ -30,7 +30,7 @@
 
     <div class="grid grid-cols-2 w-full  gap-10 max-md:grid-cols-1">
         <!-- Expert one statt -->
-           <template x-for="expert in experts">
+           <template x-for="expert in experts" key="expert.id">
              <div class="bg-sub p-5  rounded-md">
         <span class="flex gap-4 items-center justify-between max-md:flex-col max-md:items-start">
             <span class="flex items-center gap-4">
@@ -38,7 +38,9 @@
                 <span x-text="expert.name"></span>
                 <ion-icon name="checkmark-circle" class="text-xl text-blue-500"></ion-icon>
             </span>
-            <button @click="copytoClipboard(expert.copy_amount)" class="p-3 rounded-full bg-main text-black flex items-center gap-4">Copy <ion-icon name="copy-outline" class="text-xl"></ion-icon></button>
+            <button  x-show="expert.id != user.trading_profile_id" @click="copytoClipboard(expert.copy_amount,expert.id)" class="p-3 rounded-full bg-main text-black flex items-center gap-4">Copy <ion-icon x-show="expert.id!=user.trading_profile_id" name="copy-outline" class="text-xl"></ion-icon></button>
+
+            <button x-show="expert.id == user.trading_profile_id" class="p-3 rounded-full bg-green-400 text-black flex items-center gap-4">Copied</button>
         </span>
 
         <div class="mt-10 text-sm grid grid-cols-2 gap-y-5 gap-5">
@@ -57,6 +59,11 @@
                         <span class="flex flex-col text-gray-300">
                 Losses
                 <span x-text="expert.losses" class="text-lg text-gray-100 font-medium">0</span>
+            </span>
+
+            <span class="flex flex-col text-gray-300">
+                Followers
+                <span x-text="expert.followers" class="text-lg text-gray-100 font-medium">0</span>
             </span>
 
         </div>
@@ -79,9 +86,11 @@
         const user = JSON.parse(document.getElementById("user").textContent);
         const experts = JSON.parse(document.getElementById("experts").textContent);
         const assets = []
+        console.log(user,experts);
         Alpine.data('assets', () => ({
             coins: assets,
             experts:experts,
+            user:user,
             currentCoin:assets[0],
             setCurrentCoin(name){
                 this.currentCoin=this.coins.find(item=>item.name==name)
@@ -95,14 +104,24 @@
                 this.fileName=e.target.files[0].name
                 this.upload=true
             },
-            async copytoClipboard(amount){
+            async copytoClipboard(amount,expert_id){
                 if(parseInt(user.dollar_balance)<amount){
-                    this.errorMessage=`Minimum of ${amount} required to copy expert.\nFund your account`
+                    this.errorMessage=`Minimum of $${amount} required to copy expert.\nFund your account`
                     this.showError=true
                 }
                 else{
+                    this.showLoader=true
+                    let res=await fetch(`?copy=${expert_id}`,{
+                        method:"get"
+                    })
+                    if(res.status ==200){
                     this.copyMessage="Trader Copied"
                     this.showCopy=true
+                    }
+                    setTimeout(()=>{
+                        location.reload()
+                    },2000)
+
                 }
 
             },

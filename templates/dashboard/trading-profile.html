@@ -1,0 +1,32 @@
+<section
+  x-cloak
+  class="fixed z-50 h-screen w-screen bg-[rgb(0,0,0,.8)] p-10 top-0 flex justify-center items-center"
+  x-show="trading_profile"
+  x-transition
+  x-transition.duration.500ms
+>
+  <div
+    class="bg-sub rounded-md w-1/2 p-10 flex flex-col relative gap-2 max-md:w-full justify-center items-center"
+  >
+    <ion-icon
+      name="close-sharp"
+      class="absolute top-5 right-5 text-xl p-1 bg-blue-100 cursor-pointer hover:bg-blue-300 transition ease-in duration-150 rounded-md text-main"
+      @click="trading_profile=!trading_profile"
+    ></ion-icon>
+    {% if request.user.profile.trading_profile != None %}
+    <span class="text-sm text-center flex items-center flex-col gap-1">
+      <img
+        src="{{request.user.profile.trading_profile.image.url}}"
+        alt="trading_profile"
+        class="h-20 w-20 rounded-full object-cover"
+      />
+      <span class="text-main font-medium text-base">{{request.user.profile.trading_profile.name}} </span>
+      <span class="text-gray-300">{{request.user.profile.trading_profile.win_rate}}</span>
+      <span class="text-gray-300">${{request.user.profile.trading_profile.copy_amount}} </span>
+      <span class="bg-green-400 text-black px-5 py-3 rounded-full font-medium">Experts Profits : $0.00</span>
+    </span>
+    {% else %}
+    <span class="text-gray-400 text-sm">No expert selected. Checkout copy trader section</span>
+    {% endif %}
+  </div>
+</section>
