@@ -6,7 +6,7 @@
        <span class="flex flex-col items-center gap-2"> <ion-icon name="person" class="p-5 text-3xl bg-sub rounded-full" ></ion-icon>
         <span  class="">{{request.user.first_name}}</span></span>
 
-        <span class=" bg-main text-black p-3 rounded-full font-medium text-base w-full text-center">$0.00</span>
+        <span class=" bg-main text-black p-3 rounded-full font-medium text-base w-full text-center">${{request.user.profile.dollar_balance}}.00</span>
     </div>
     <ul class=' flex flex-col gap-4 mt-10 justify-center '>
     <a href="{%url 'dashboard'%}" class='hover:text-main rounded-md hover:scale-105 transition duration-100 ease-in flex gap-3 items-center '><ion-icon name="home-outline" class='text-xl'></ion-icon>Dashboard</a>
@@ -53,7 +53,7 @@
        <span class="flex flex-col items-center gap-2"> <ion-icon name="person" class="p-5 text-3xl bg-sub rounded-full" ></ion-icon>
         <span  class="">{{request.user.first_name}}</span></span>
 
-        <span class=" bg-main text-black p-3 rounded-full font-medium text-base w-full text-center">$0.00</span>
+        <span class=" bg-main text-black p-3 rounded-full font-medium text-base w-full text-center">${{request.user.profile.dollar_balance}}.00</span>
     </div>
 
      <ul class=' flex flex-col gap-4 mt-10 justify-center '>

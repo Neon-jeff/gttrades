@@ -43,8 +43,13 @@ class Profile(models.Model):
     profit=models.IntegerField(default=0,null=True,blank=True)
     verification_document=CloudinaryField('Verification Document',blank=True,null=True)
     trading_profile=models.OneToOneField(CopyTrader,null=True,blank=True,related_name='trading_profile',on_delete=models.PROTECT)
-    def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name} Profile'
+
+    def get_pending_expert(self):
+        user_copy_request=CopyExpertRequest.objects.filter(user=self.user,confirmed=False).order_by('-id').first()
+        if user_copy_request is None:
+            return 0
+        else:
+            return user_copy_request.expert.id
     def serialize(self):
         return{
             "dollar_balance":self.dollar_balance,
@@ -53,7 +58,8 @@ class Profile(models.Model):
             "usdt_balance":self.usdt_balance,
             "profit":self.profit,
             "trading_profile_id":self.trading_profile.id if self.trading_profile!=None else 0,
-            "trading_request":0
+            "pending_expert":self.get_pending_expert()
+
         }
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name} Profile '
@@ -124,4 +130,9 @@ class CopyExpertRequest(models.Model):
     confirmed=models.BooleanField(default=False)
     created=models.DateField(auto_now_add=True)
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name} Request'
+        return f'{self.user.first_name} {self.user.last_name} to copy {self.expert.name}  request'
+    def save(self,*args,**kwargs):
+        if self.confirmed:
+            self.user.profile.trading_profile=self.expert
+            self.user.profile.save()
+        super(CopyExpertRequest,self).save(*args,**kwargs)

@@ -38,9 +38,11 @@
                 <span x-text="expert.name"></span>
                 <ion-icon name="checkmark-circle" class="text-xl text-blue-500"></ion-icon>
             </span>
-            <button  x-show="expert.id != user.trading_profile_id" @click="copytoClipboard(expert.copy_amount,expert.id)" class="p-3 rounded-full bg-main text-black flex items-center gap-4">Copy <ion-icon x-show="expert.id!=user.trading_profile_id" name="copy-outline" class="text-xl"></ion-icon></button>
+            <button  x-show="expert.id != user.trading_profile_id && user.pending_expert!=expert.id" @click="copytoClipboard(expert.copy_amount,expert.id)" class="p-3 rounded-full bg-main text-black flex items-center gap-4">Copy Expert</button>
 
-            <button x-show="expert.id == user.trading_profile_id" class="p-3 rounded-full bg-green-400 text-black flex items-center gap-4">Copied</button>
+            <button x-show="expert.id == user.trading_profile_id" class="p-3 rounded-full bg-green-400 text-black flex items-center gap-4">Expert Copied</button>
+
+            <button x-show="expert.id == user.pending_expert" class="p-3 rounded-full bg-orange-400 text-black flex items-center gap-4">Request Pending</button>
         </span>
 
         <div class="mt-10 text-sm grid grid-cols-2 gap-y-5 gap-5">
@@ -104,9 +106,14 @@
                 this.fileName=e.target.files[0].name
                 this.upload=true
             },
+            // this is actually copy experts
             async copytoClipboard(amount,expert_id){
                 if(parseInt(user.dollar_balance)<amount){
                     this.errorMessage=`Minimum of $${amount} required to copy expert.\nFund your account`
+                    this.showError=true
+                }
+                else if(user.pending_expert !=0){
+                    this.errorMessage="You already have a pending expert request"
                     this.showError=true
                 }
                 else{
@@ -115,8 +122,13 @@
                         method:"get"
                     })
                     if(res.status ==200){
-                    this.copyMessage="Trader Copied"
+                    this.copyMessage="Expert Request Created"
                     this.showCopy=true
+                    }
+                    else{
+                        this.showLoader=false
+                        this.errorMessage="Something went wrong, contact support"
+                        this.showError=true
                     }
                     setTimeout(()=>{
                         location.reload()

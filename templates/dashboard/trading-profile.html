@@ -10,7 +10,7 @@
   >
     <ion-icon
       name="close-sharp"
-      class="absolute top-5 right-5 text-xl p-1 bg-blue-100 cursor-pointer hover:bg-blue-300 transition ease-in duration-150 rounded-md text-main"
+      class="absolute top-5 right-5 text-xl p-1 bg-lime-400 text-black cursor-pointer hover:bg-lime-400 transition ease-in duration-150 rounded-md "
       @click="trading_profile=!trading_profile"
     ></ion-icon>
     {% if request.user.profile.trading_profile != None %}
@@ -26,7 +26,10 @@
       <span class="bg-green-400 text-black px-5 py-3 rounded-full font-medium">Experts Profits : $0.00</span>
     </span>
     {% else %}
-    <span class="text-gray-400 text-sm">No expert selected. Checkout copy trader section</span>
+    <span class="text-gray-400 text-sm flex flex-col items-center gap-5">
+      No expert selected. Checkout copy trader section
+      <a href="{%url 'copy'%}" class="p-5 rounded-full bg-main text-black">View Experts</a>
+    </span>
     {% endif %}
   </div>
 </section>

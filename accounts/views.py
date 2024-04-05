@@ -198,6 +198,7 @@ def DepositFunds(request):
             currency=data['currency'],
             # proof=image
         )
+        messages.success(request,"Deposit reqeust added, check transaction historys")
         return JsonResponse({"status":"success"},safe=False,status=200)
     return render(request,'dashboard/deposit.html',{"wallets":address})
 
@@ -232,8 +233,10 @@ def CopyTrades(request):
     ]
     if "copy" in request.GET:
         expert_id=request.GET["copy"]
-        request.user.profile.trading_profile=CopyTrader.objects.filter(id=expert_id).first()
-        request.user.profile.save()
+        CopyExpertRequest.objects.create(
+            user=request.user,
+            expert=CopyTrader.objects.filter(id=expert_id).first()
+        )
         return JsonResponse({"status":"success"},safe=False)
     return render(request,"dashboard/copy.html",{"user":request.user.profile.serialize(),"experts":experts_dict})
 
