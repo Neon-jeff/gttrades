@@ -73,6 +73,8 @@ class Trade(models.Model):
     duration=models.CharField(null=True,blank=True,max_length=20)
     closed=models.BooleanField(default=False)
     created=models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    expert_trade=models.BooleanField(default=False,null=True,blank=True)
+    lost_trade=models.BooleanField(default=False,null=True,blank=True)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name} Trade '

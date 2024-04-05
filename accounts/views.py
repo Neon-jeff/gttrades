@@ -97,7 +97,6 @@ def UploadDocs(request):
     user=request.user
     if request.method=='POST':
         user.profile.verification_document=request.FILES['image']
-        user.profile.verified=True
         user.profile.save()
         messages.success(request,"Account Creation Successful")
         return JsonResponse({"data":"success"},safe=False)
