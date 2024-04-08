@@ -31,24 +31,24 @@
 
       <!-- Deposits -->
 
-      <div class="history deposits" x-transition x-transition.duration.500ms>
+      <div class="history deposits text-xs" x-transition x-transition.duration.500ms>
         <template x-for="d in deposits" :key="d.id">
-          <div class="flex justify-between items-center bg-gray-800 p-5 rounded-md my-5">
+          <div class="flex justify-between items-center bg-gray-800 p-5 max-sm:p-3 rounded-md my-5">
             <span x-text="d.currency"></span>
             <span x-text="d.created"></span>
             <span x-text="'$'+d.amount"></span>
             <!-- check for confirmation here -->
-            <span class="p-3 rounded-full border-2 flex items-center gap-2 text-orange-400 justify-center border-orange-500" x-show="d.status=='pending'">
-              <ion-icon name="alert-circle"  class="text-orange-400 text-xl"></ion-icon>
+            <span class="p-3 rounded-full border-2 flex max-sm:p-1  items-center gap-1 text-orange-400 justify-center border-orange-500" x-show="d.status=='pending'">
+              <ion-icon name="alert-circle"  class="text-orange-400 text-xl max-sm:hidden"></ion-icon>
               Pending
             </span>
-            <span class="p-3 rounded-full border-2 flex items-center gap-2 text-green-400 justify-center border-green-400" x-show="d.status=='approved'">
-              <ion-icon name="checkmark-circle"  class="text-green-400 text-xl"></ion-icon>
+            <span class="p-3 rounded-full border-2 max-sm:p-1 flex items-center gap-1 text-green-400 justify-center border-green-400" x-show="d.status=='approved'">
+              <ion-icon name="checkmark-circle"  class="text-green-400 text-xl max-sm:hidden"></ion-icon>
               Approved
             </span>
 
-            <span class="p-3 rounded-full border-2 flex items-center gap-2 justify-center text-red-400 border-red-500" x-show="d.status=='declined'">
-              <ion-icon name="close-circle"  class="text-red-400 text-xl"></ion-icon>
+            <span class="p-3 rounded-full border-2 flex max-sm:p-1 items-center gap-1 justify-center text-red-400 border-red-500" x-show="d.status=='declined'">
+              <ion-icon name="close-circle"  class="text-red-400 text-xl max-sm:hidden"></ion-icon>
               Declined
             </span>
           </div>

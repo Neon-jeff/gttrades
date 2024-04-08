@@ -9,6 +9,12 @@ html{
     scroll-behavior: smooth;
     overflow-x: hidden;
     background-color: black;
+    height: 100vh;
+}
+
+body{
+    height: 100%;
+    background-color: black;
 }
 
 iframe{
