@@ -19,7 +19,7 @@ from .wallets import wallet_address
 def LoginView(request):
     if request.user.is_authenticated and request.user.profile.verified==True:
         return redirect('dashboard')
-    if request.user.is_authenticated and request.user.profile.verified==False:
+    if request.user.is_authenticated and request.user.profile.verification_document=='':
             return redirect('upload')
     if request.method=="POST":
         email=request.POST['email']
@@ -123,7 +123,7 @@ def Dashboard(request):
     #     "forex":[],
     #     "stocks":[]
     # }
-    total_deposit=sum([x.amount for x in request.user.user_deposit.filter(confirmed=True)])
+    total_deposit=sum([x.amount for x in request.user.user_deposit.filter(status='approved')])
     return render(request,'dashboard/dashboard.html',{"assets":assets,"user":user_json,"deposit":total_deposit})
 
 @login_required(login_url='login')
@@ -264,7 +264,7 @@ def History(request):
     deposits=[
         {
             "amount":d.amount,
-            "comfirmed":d.confirmed,
+            "status":d.status,
             "currency":d.currency,
             "created":d.created.strftime('%m/%d/%Y'),
             "id":d.id

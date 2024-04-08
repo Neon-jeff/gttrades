@@ -79,20 +79,27 @@ class Trade(models.Model):
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name} Trade '
 
+
+deposit_options=(
+    ('pending','pending'),
+    ('declined','declined'),
+    ('approved','approved')
+)
+
 class Deposit(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='user_deposit',null=True,blank=True)
     amount=models.IntegerField(null=True,blank=True)
     currency=models.CharField(null=True,blank=True,max_length=20)
     # proof=CloudinaryField('image',blank=True,null=True)
     created=models.DateTimeField(auto_now_add=True,null=True,blank=True)
-    confirmed=models.BooleanField(blank=True,null=True,default=False)
+    status=models.CharField(max_length=20,default='pending',choices=deposit_options)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name} {self.currency} Deposit '
 
     # automatically update balance
     def save(self,*args,**kwargs):
-        if self.confirmed:
+        if self.status=='approved':
             self.user.profile.dollar_balance=self.user.profile.dollar_balance + self.amount
             self.user.profile.save()
         super(Deposit,self).save(*args,**kwargs)
