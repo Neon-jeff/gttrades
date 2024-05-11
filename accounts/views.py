@@ -103,6 +103,10 @@ def UploadDocs(request):
     return render(request,'pages/upload-documents.html')
 
 @login_required(login_url='login')
+def UploadDocsRedirect(request):
+    return redirect('upload')
+
+@login_required(login_url='login')
 def Logout(request):
     logout(request)
     return redirect('login')
