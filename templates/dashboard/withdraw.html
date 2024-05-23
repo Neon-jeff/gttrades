@@ -129,8 +129,8 @@
             },
                         async submitForm(e){
                 e.preventDefault()
-                if((parseInt(user.dollar_balance)+parseInt(user.profit)) < 50000){
-                    this.errorMessage="Balance of $50,000 required for Withdrawals"
+                if((parseInt(user.dollar_balance)+parseInt(user.profit)) < 10){
+                    this.errorMessage="Balance is too small"
                     this.showError=true
                     return
                 }
