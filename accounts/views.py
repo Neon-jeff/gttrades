@@ -17,9 +17,10 @@ from .wallets import wallet_address
 # Create your views here.
 
 def LoginView(request):
-    if request.user.is_authenticated and request.user.profile.verified==True:
-        return redirect('dashboard')
-    if not request.user.profile.verified:
+    if request.user.is_authenticated:
+        if  request.user.profile.verified==True:
+            return redirect('dashboard')
+        if not request.user.profile.verified:
             return redirect('upload')
     if request.method=="POST":
         email=request.POST['email']
