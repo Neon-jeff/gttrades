@@ -95,10 +95,10 @@ def SignUpSuccessView(request):
 
 @login_required(login_url='login')
 def UploadDocs(request):
-    if not request.user.profile.verified or request.user.profile.verification_document != None:
+    if not request.user.profile.verified and request.user.profile.verification_document != None:
         messages.success(request,"Verification document already uploaded")
         return redirect('pending')    
-    if request.user.profile.verified or request.user.profile.verification_document != None:
+    if request.user.profile.verified and request.user.profile.verification_document != None:
         messages.success(request,"Verification document already uploaded")
         return redirect('dashboard')
     user=request.user
