@@ -19,7 +19,7 @@ from .wallets import wallet_address
 def LoginView(request):
     if request.user.is_authenticated and request.user.profile.verified==True:
         return redirect('dashboard')
-    if request.user.is_authenticated and request.user.profile.verification_document=='':
+    if not request.user.profile.verified:
             return redirect('upload')
     if request.method=="POST":
         email=request.POST['email']
@@ -33,7 +33,7 @@ def LoginView(request):
             else:
                 login(request, auth_user)
                 if(auth_user.profile.verified==False):
-                    return redirect('upload')
+                    return redirect('pending')
                 return redirect('dashboard')
         else:
             messages.error(request,'No existing account')
@@ -94,6 +94,12 @@ def SignUpSuccessView(request):
 
 @login_required(login_url='login')
 def UploadDocs(request):
+    if not request.user.profile.verified or request.user.profile.verification_document != None:
+        messages.success(request,"Verification document already uploaded")
+        return redirect('pending')    
+    if request.user.profile.verified or request.user.profile.verification_document != None:
+        messages.success(request,"Verification document already uploaded")
+        return redirect('dashboard')
     user=request.user
     if request.method=='POST':
         user.profile.verification_document=request.FILES['image']
@@ -104,17 +110,24 @@ def UploadDocs(request):
 
 @login_required(login_url='login')
 def UploadDocsRedirect(request):
-    return redirect('upload')
+    return redirect('pending')
 
 @login_required(login_url='login')
 def Logout(request):
     logout(request)
     return redirect('login')
 
+
+@login_required(login_url='login')
+def Pending(request):
+    if request.user.profile.verified:
+        return redirect('dashboard')
+    return render(request,'pages/verification-pending.html')
+
 @login_required(login_url='login')
 def Dashboard(request):
     if request.user.profile.verified==False:
-        redirect('upload')
+        return redirect('upload')
     user_profile=Profile.objects.filter(user=request.user).first()
     user_json=user_profile.serialize()
     assets={

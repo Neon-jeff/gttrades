@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block content %}
+
+<!-- upload id verificatio here -->
+<section
+  x-data="form"
+  class="h-full bg-black flex flex-col gap-5 px-5 text-gray-300 text-center text-sm py-40 justify-center items-center"
+>
+  {%include "components/alerts.html"%} {% include "components/nav.html" %}
+  {% include "components/loader.html" %} {% include "components/error.html" %}
+  <h1 class="text-2xl max-md:w-full max-md:mt-40 w-1/2 font-semibold text-main">
+    Account Verification Pending
+  </h1>
+  <p>Your uploaded document is currently under review, verification may take 20mins-24HRS to process</p>
+  <p>Contact <span class="text-main">support@gtbulls.com</span> for further assistance</p>
+
+</section>
+
+{% endblock content%}

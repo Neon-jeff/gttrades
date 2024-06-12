@@ -41,7 +41,7 @@ class Profile(models.Model):
     sol_balance=models.IntegerField(default=0,null=True,blank=True)
     ada_balance=models.IntegerField(default=0,null=True,blank=True)
     profit=models.IntegerField(default=0,null=True,blank=True)
-    verification_document=CloudinaryField('Verification Document',blank=True,null=True)
+    verification_document=models.FileField(null=True,blank=True,upload_to='documents')
     trading_profile=models.OneToOneField(CopyTrader,null=True,blank=True,related_name='trading_profile',on_delete=models.PROTECT)
 
     def get_pending_expert(self):

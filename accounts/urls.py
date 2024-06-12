@@ -1,11 +1,13 @@
 from django.urls import path,include
 from .views import *
 
+
 urlpatterns = [
     path('register-success',SignUpSuccessView,name='success'),
     path('activate/',ActivateAccount,name='activate'),
     path('verify-documents/',UploadDocs,name='upload'),
     path('verified-documents/',UploadDocsRedirect),
+    path('verification-pending',Pending,name='pending'),
     path('login/',LoginView,name='login'),
     path('sign-up/',SignUpView,name='sign-up'),
     path('dashboard/',Dashboard,name='dashboard'),
