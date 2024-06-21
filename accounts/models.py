@@ -121,12 +121,13 @@ class Withdrawal(models.Model):
 
 
 class Deposit_Wallets(models.Model):
+    ticker_code=models.CharField(max_length=100,null=True,blank=True)
     coin=models.CharField(max_length=100,null=True,blank=True)
     address=models.CharField(max_length=100,null=True,blank=True)
     image=models.URLField(max_length=200,blank=True,null=True)
 
     def save(self,*args,**kwargs):
-        self.image=CreateQRCode(coin=self.coin.capitalize(),address=self.address)
+        self.image=CreateQRCode(coin=self.ticker_code,address=self.address)
         super(Deposit_Wallets, self).save(*args, **kwargs)
     def __str__(self):
         return f'{self.coin.capitalize()} Address'

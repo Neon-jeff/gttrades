@@ -7,28 +7,25 @@ key="8e3520cf14e2c8466e5f4bcc9dea126c"
 # this code creates a qr code, upload and return the url to the model field
 def CreateQRCode(coin,address):
 
-    file=requests.get(f'https://chart.googleapis.com/chart?chs=225x225&chld=L|2&cht=qr&chl={coin}:{address}').content
+    # file=requests.get(f'https://chart.googleapis.com/chart?chs=225x225&chld=L|2&cht=qr&chl={coin}:{address}').content
 
-    # url = "https://api.cryptapi.io/" + coin + "/qrcode/"
+    url = "https://api.cryptapi.io/" + coin + "/qrcode/"
 
-    # query = {
-    # "address": address,
-    # "value": "",
-    # "size": "512"
-    # }
+    query = {
+    "address": address,
+    "value": "",
+    "size": "512"
+    }
 
-    # response = requests.get(url, params=query)
+    response = requests.get(url, params=query)
 
-    # file = response.json()["qr_code"]
+    file = response.json()["qr_code"]
     # post image to image host server
     data={
             "key":key,
-            "image":base64.b64encode(file),
+            "image":file,
         }
 
     resp= requests.post("https://api.imgbb.com/1/upload",data=data)
-    print(resp.json())
     # Perform Error Handling here
     return resp.json()['data']['url']
-
-
