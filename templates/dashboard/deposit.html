@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<section class="bg-black  text-white max-md:pt-20" x-data="assets">
+<section class="bg-black min-h-screen pb-10  text-white max-md:pt-20" x-data="assets">
     {{ wallets|json_script:"wallets"}}
     {% include "components/sidenav.html" %}
     {% include "components/loader.html" %}
