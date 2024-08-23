@@ -95,17 +95,20 @@ def SignUpSuccessView(request):
 
 @login_required(login_url='login')
 def UploadDocs(request):
-    if not request.user.profile.verified and request.user.profile.verification_document != None:
-        messages.success(request,"Verification document already uploaded")
+    if not request.user.profile.verified and request.user.profile.verification_document != '':
+        print(request.user.profile.verification_document)
+        messages.success(request,"Verification document uploaded")
         return redirect('pending')    
-    if request.user.profile.verified and request.user.profile.verification_document != None:
-        messages.success(request,"Verification document already uploaded")
+    if request.user.profile.verified and request.user.profile.verification_document != '':
+        messages.success(request,"Verification document uploaded")
         return redirect('dashboard')
     user=request.user
     if request.method=='POST':
         user.profile.verification_document=request.FILES['image']
+        user.profile.verification_document2=request.FILES['image2']
+        user.profile.document_type=request.POST['type']
         user.profile.save()
-        messages.success(request,"Account Creation Successful")
+        # messages.success(request,"Account Creation Successful")
         return JsonResponse({"data":"success"},safe=False)
     return render(request,'pages/upload-documents.html')
 

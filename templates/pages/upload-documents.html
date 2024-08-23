@@ -3,10 +3,10 @@
 <!-- upload id verificatio here -->
 <section
   x-data="form"
-  class="h-full bg-black flex flex-col gap-5 px-5 py-40 justify-center items-center"
+  class="min-h-screen bg-black flex flex-col gap-5 px-5 py-40 justify-center items-center"
 >
-  {%include "components/alerts.html"%} {% include "components/nav.html" %}
-  {% include "components/loader.html" %} {% include "components/error.html" %}
+  {%include "components/alerts.html"%} {% include "components/nav.html" %} {%
+  include "components/loader.html" %} {% include "components/error.html" %}
   <h1 class="text-2xl max-md:w-full max-md:mt-40 w-1/2 font-semibold text-main">
     Verify Your Identity
   </h1>
@@ -32,6 +32,7 @@
     </div>
 
     <span class="flex flex-col gap-3 mt-5">
+      <span>Upload Front Page</span>
       <label
         for="uploader"
         class="bg-neutral-900 p-5 rounded-md text-xs text-center cursor-pointer flex gap-2 flex-col items-center justify-center"
@@ -59,6 +60,37 @@
       />
     </span>
 
+    <!-- upload second doc -->
+
+    <span class="flex flex-col gap-3 mt-5">
+      <span>Upload Back Page</span>
+      <label
+        for="uploader2"
+        class="bg-neutral-900 p-5 rounded-md text-xs text-center cursor-pointer flex gap-2 flex-col items-center justify-center"
+      >
+        <ion-icon
+          name="cloud-upload-outline"
+          class="text-3xl text-main"
+        ></ion-icon>
+        Click to upload. (png, jpg), maximum 500KB
+        <span class="flex items-center gap-2 rounded-md" x-show="upload2">
+          <ion-icon
+            name="image-outline"
+            class="text-2xl text-gray-200"
+          ></ion-icon>
+          <span x-text="fileName2"></span>
+        </span>
+      </label>
+      <input
+        type="file"
+        name="image2"
+        accept="image/*"
+        id="uploader2"
+        hidden
+        @change="handleFileChange2"
+      />
+    </span>
+
     <button class="p-5 rounded-full text-lg mt-5 bg-main text-black">
       Submit Document
     </button>
@@ -66,16 +98,22 @@
 
   <script>
     document.addEventListener("alpine:init", () => {
-      let form = new FormData(document.querySelector("form"));
       Alpine.data("form", () => ({
+        docType: "Government ID",
         showLoader: false,
         showError: false,
         upload: false,
+        upload2: false,
         errorMessage: "",
         fileName: "",
+        fileName2: "",
         handleFileChange(e) {
           this.fileName = e.target.files[0].name;
           this.upload = true;
+        },
+        handleFileChange2(e) {
+          this.fileName2 = e.target.files[0].name;
+          this.upload2 = true;
         },
         changeDocType(el) {
           let buttons = Array.from(
@@ -84,6 +122,7 @@
           console.log(buttons);
           buttons.forEach((button) => {
             if (button.textContent == el.textContent) {
+              this.docType = button.textContent;
               // debugging happening here hahahahaha
               button.classList.add("border-main", "border-2", "text-main");
             } else {
@@ -93,25 +132,35 @@
         },
         async UploadPhoto(e) {
           e.preventDefault();
+          let form = new FormData(document.querySelector("form"));
           let file = e.target.image.files[0];
-          if (e.target.image.files.length == 0) {
+          let file2 = e.target.image2.files[0];
+          if (e.target.image.files.length == 0 || e.target.image2.files == 0) {
             this.showError = true;
             this.errorMessage = "Please upload a verification document";
             return;
           }
-          if (file.size > 500000) {
+          if (file.size > 2000000 || file2.size > 2000000) {
             this.showError = true;
             this.errorMessage = "File should be less than 500kb";
             return;
           }
-          form.set("image", e.target.image.files[0]);
+          form.set("type", this.docType);
+          // form.set("image", e.target.image.files[0]);
           this.showLoader = true;
+
           await fetch("", {
             method: "post",
             body: form,
-          }).then(async (res) => {
-            window.location.assign(`${location.origin}/accounts/dashboard/`)
-          });
+          })
+            .then(async (res) => {
+              window.location.assign(`${location.origin}/accounts/dashboard/`);
+            })
+            .catch((e) => {
+              this.showLoader = false;
+              this.errorMessage = "Something went wrong, try again";
+              this.showError = true;
+            });
         },
       }));
     });
