@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<section class="bg-black min-h-screen pb-10  text-white max-md:pt-20" x-data="assets">
+<section class="bg-black min-h-screen pb-36  text-white max-md:pt-20" x-data="assets">
     {{ wallets|json_script:"wallets"}}
     {% include "components/sidenav.html" %}
     {% include "components/loader.html" %}
@@ -70,7 +70,8 @@
                                 :class="copied?'cursor-pointer text-xl p-2 rounded-md bg-sub text-green-500':'cursor-pointer text-xl p-2 rounded-md bg-sub'"
                                 @click="copytoClipboard"></ion-icon>
                         </span>
-                        <img :src="currentCoin.image" class="h-48 self-start rounded-md py-3 w-48 object-contain" alt="">
+                        <!-- <img :src="currentCoin.image" class="h-48 self-start rounded-md py-3 w-48 object-contain"
+                            alt=""> -->
                     </fieldset>
 
                     <fieldset class="flex flex-col gap-2">

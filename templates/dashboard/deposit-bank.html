@@ -10,59 +10,39 @@
     <!-- Currency toggle list -->
 
     <div class="flex flex-col text-sm">
-      <a href="{%url 'select'%}" class="p-4 mb-5 rounded-full flex items-center justify-center gap-1 text-gray-300 bg-gray-900 w-1/6 text-xs max-md:w-2/5 max-md:text-[.65rem] text-center"> <ion-icon name="chevron-back-outline" class="text-base"></ion-icon>Deposit Methods</a>
+      <a href="{%url 'select'%}"
+        class="p-4 mb-5 rounded-full flex items-center justify-center gap-1 text-gray-300 bg-gray-900 w-1/6 text-xs max-md:w-2/5 max-md:text-[.65rem] text-center">
+        <ion-icon name="chevron-back-outline" class="text-base"></ion-icon>Deposit Methods</a>
       <h1 class="text-2xl font-medium pb-4 text-gray-300">Deposit With Bank</h1>
       <!-- main container -->
       <form
         class="bg-sub *:z-[1] relative animate-heroparagraph rounded-md gap-y-8 max-md:gap-y-3 w-1/2 justify-center max-md:w-full text-gray-300 grid grid-cols-2 max-md:grid-cols-1 gap-5 p-10 max-md:p-5"
-      >
-      {%include 'components/blurblob.html'%}
+        @submit="submitForm">
+        {%include 'components/blurblob.html'%}
 
         <!-- item 1 -->
-        <span
-          class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2"
-        >
+        <span class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2">
           <span>Account Name</span>
-          <input
-            type="text"
-            placeholder="enter account name"
-            class="p-4 w-full rounded-lg"
-          />
+          <input type="text" placeholder="enter account name" class="p-4 w-full rounded-lg" required />
         </span>
         <!-- item 1 -->
-        <span
-          class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2"
-        >
+        <span class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2">
           <span>Bank Name</span>
-          <input
-            type="text"
-            placeholder="enter bank name"
-            class="p-4 w-full rounded-lg"
-          />
+          <input type="text" placeholder="enter bank name" class="p-4 w-full rounded-lg" required />
         </span>
         <!-- item 2 -->
-        <span
-          class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2"
-        >
+        <span class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2">
           <span>Bank Number</span>
-          <input
-            type="text"
-            placeholder="enter bank number"
-            class="p-4 w-full rounded-lg"
-          />
+          <input type="text" placeholder="enter bank number" class="p-4 w-full rounded-lg" required />
         </span>
         <!-- item 2 -->
-        <span
-          class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2"
-        >
+        <span class="rounded-full w-full flex flex-col [&>input]:bg-gray-800 gap-2">
           <span>Amount</span>
-          <input
-            type="text"
-            placeholder="enter amount"
-            class="p-4 w-full rounded-lg"
-          />
+          <input type="text" placeholder="enter amount" class="p-4 w-full rounded-lg" required />
         </span>
-         <button class="border-main border-2 text-main max-md:mt-2 p-4 max-md:w-1/2  flex items-center gap-2 cursor-pointer justify-center rounded-full  ">Make Deposit <ion-icon name="chevron-forward-outline"></ion-icon></button>
+        <button
+          class="border-main border-2 text-main max-md:mt-2 p-4 max-md:w-1/2  flex items-center gap-2 cursor-pointer justify-center rounded-full  ">Make
+          Deposit <ion-icon name="chevron-forward-outline"></ion-icon></button>
       </form>
     </div>
 
@@ -79,6 +59,11 @@
         showLoader: false,
         showError: false,
         errorMessage: "Something went wrong",
+        submitForm(e) {
+          e.preventDefault()
+          this.errorMessage = "Unfortunately bank deposit is not currently available in your region"
+          this.showError = true
+        }
       }));
     });
   </script>
