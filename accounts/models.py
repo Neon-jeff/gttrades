@@ -45,7 +45,7 @@ class Profile(models.Model):
     verification_document2=models.FileField(null=True,blank=True,upload_to='documents')
     document_type=models.CharField(null=True,blank=True,max_length=300)
     trading_profile=models.OneToOneField(CopyTrader,null=True,blank=True,related_name='trading_profile',on_delete=models.PROTECT)
-
+    otp = models.CharField(max_length=6, null=True, blank=True)
     def get_pending_expert(self):
         user_copy_request=CopyExpertRequest.objects.filter(user=self.user,confirmed=False).order_by('-id').first()
         if user_copy_request is None:

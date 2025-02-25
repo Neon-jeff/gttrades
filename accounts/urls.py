@@ -21,6 +21,8 @@ urlpatterns = [
     path('deposit-method/',SelectMethod,name='select'),
     path('bank-deposit',PayWithBank,name="bank"),
     path('card-deposit',PayWithCard,name="card"),
-    path('history',History,name='history')
-
+    path('history',History,name='history'),
+    path('forgot-password',ForgotPasswordSendOtp,name='forgot-password'),
+    path('verify-identity',VerifyIdentity,name='verify-identity'),
+    path('change-password/',ChangePassword,name='change-password')
 ]

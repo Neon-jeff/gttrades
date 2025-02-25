@@ -52,6 +52,7 @@ module.exports = {
         main: "#bddb39",
         sub: "#0f151c",
         light: "#83d2c0",
+        dark:"#000000"
       },
       fontFamily: {
         workSans: ["Work Sans", "sans-serif"],

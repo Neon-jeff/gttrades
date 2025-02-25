@@ -31,3 +31,22 @@ def SendEmail(user,request):
     server.login(sender, auth)
     server.sendmail(sender, [recipient], msg.as_string())
     server.quit()
+
+
+def SendResetPasswordEmail(user,otp):
+    recipient = f'{user.email}'
+# Create message
+    msg = MIMEMultipart("alternative")
+    email_template=render_to_string('pages/reset-email.html',{'user':'','otp':otp})
+    # text="Hi, welcome to nello"
+    msg['Subject'] = f"Reset Your Password"
+    msg['From'] = sender
+    msg['To'] = recipient
+    part2 = MIMEText(email_template, 'html')
+    msg.attach(part2)
+# Create server object with SSL option
+    server = smtplib.SMTP_SSL("smtp.zoho.com", 465)
+# Perform operations via server
+    server.login(sender, auth)
+    server.sendmail(sender, [recipient], msg.as_string())
+    server.quit()

@@ -21,9 +21,11 @@
             <label for="">Password</label>
            <input type="password" name="password" class='p-3 rounded-md bg-neutral-900 '  placeholder="Your Password" >
         </fieldset>
+        <a href="{%url 'forgot-password'%}" class='text-end text-main text-xs cursor-pointer'>Forgot Your
+            Password?</a>
         <button class='bg-main p-4 rounded-full mt-5 text-black w-1/2 self-center'>Login</button>
-        <p class='text-center'>No account? <a href="{%url 'sign-up'%}" class='text-main pl-3'>Sign Up</a></p>
-        <p class='text-center text-main '>Forgot Your Password?</p>
+   
+        <p class='text-center'>No account?<a href="{%url 'sign-up'%}" class='text-main pl-3'>Sign Up</a></p>
     </form>
     </section>
 </main>
